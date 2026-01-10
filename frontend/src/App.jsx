@@ -1,5 +1,7 @@
+import Dashboard from "./components/Dashboard";
+
 function App() {
-  return <h1>PulseGuard Dashboard</h1>;
+  return <Dashboard />;
 }
 
 export default App;
