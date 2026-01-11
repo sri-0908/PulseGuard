@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
-import { fetchPrediction } from "../services/api";
+import { fetchPrediction, checkHealth } from "../services/api";
 import AlertCard from "./AlertCard";
 
 function Dashboard() {
   const [data, setData] = useState(null);
+  const [status, setStatus] = useState("Checking...");
 
   useEffect(() => {
-    fetchPrediction().then(setData);
+    // Fetch prediction
+    fetchPrediction()
+      .then(setData)
+      .catch(() => console.error("Prediction failed"));
+
+    // Health check
+    checkHealth()
+      .then(() => setStatus("Live Monitoring"))
+      .catch(() => setStatus("Backend offline"));
   }, []);
 
   return (
@@ -18,10 +27,10 @@ function Dashboard() {
           top: 0,
           backdropFilter: "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",
-          background: "rgba(0, 0, 0, 0.6)",
+          background: "rgba(0,0,0,0.6)",
           padding: "20px 60px",
           zIndex: 10,
-          borderBottom: "1px solid rgba(255, 255, 255, 0.08)"
+          borderBottom: "1px solid rgba(255,255,255,0.08)",
         }}
       >
         <h2 style={{ margin: 0 }}>🛡 PulseGuard</h2>
@@ -36,25 +45,29 @@ function Dashboard() {
           Early Disease Outbreak Intelligence Platform
         </p>
 
+        <p style={{ marginTop: "12px", color: "#30d158" }}>
+          ● {status}
+        </p>
+
         {/* Grid */}
         <div
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
             gap: "24px",
-            marginTop: "40px"
+            marginTop: "40px",
           }}
         >
-          {/* Status Card */}
+          {/* System Status */}
           <div className="glass" style={{ padding: "28px" }}>
             <h3>System Status</h3>
             <p className="subtle">Real-time surveillance active</p>
             <p style={{ marginTop: "12px", color: "#30d158" }}>
-              ● Live Monitoring
+              ● {status}
             </p>
           </div>
 
-          {/* Prediction Card */}
+          {/* Prediction */}
           <div className="glass" style={{ padding: "28px" }}>
             <h3>Outbreak Prediction</h3>
             {!data ? (
@@ -80,4 +93,3 @@ function Dashboard() {
 }
 
 export default Dashboard;
-

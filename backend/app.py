@@ -1,17 +1,20 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
-import random
+from model import predict_outbreak
 
 app = Flask(__name__)
-CORS(app)  # VERY IMPORTANT for frontend connection
+CORS(app)
 
-@app.route("/predict", methods=["GET"])
+@app.route("/predict")
 def predict():
-    return jsonify({
-        "region": "Chennai",
-        "risk_level": random.choice(["Low", "Medium", "High"]),
-        "confidence": round(random.uniform(0.75, 0.95), 2)
-    })
+    result = predict_outbreak()
+    return jsonify(result)
+
+@app.route("/health")
+def health():
+    return jsonify({"status": "ok"})
 
 if __name__ == "__main__":
-    app.run(port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
+
+

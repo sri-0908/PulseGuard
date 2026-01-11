@@ -1,25 +1,25 @@
 function AlertCard({ data }) {
   const color =
-    data.risk_level === "High"
+    data.level === "High"
       ? "#ff453a"
-      : data.risk_level === "Medium"
+      : data.level === "Medium"
       ? "#ffd60a"
-      : "#32d74b";
+      : "#30d158";
 
   return (
-    <div style={{ marginTop: "16px" }}>
-      <p className="subtle">Region</p>
-      <h2>{data.region}</h2>
-
-      <p className="subtle" style={{ marginTop: "16px" }}>
-        Risk Level
+    <div>
+      <p>
+        <strong>Region:</strong> {data.region}
       </p>
-      <h2 style={{ color }}>{data.risk_level}</h2>
-
-      <p className="subtle" style={{ marginTop: "16px" }}>
-        Confidence
+      <p>
+        <strong>Risk Score:</strong> {data.risk_score}
       </p>
-      <h3>{Math.round(data.confidence * 100)}%</h3>
+      <p style={{ color }}>
+        <strong>Alert Level:</strong> {data.level}
+      </p>
+      <p>
+        <strong>Trend:</strong> {data.trend}
+      </p>
     </div>
   );
 }
