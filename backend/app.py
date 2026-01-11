@@ -1,6 +1,7 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 from flask_cors import CORS
 from model import predict_outbreak
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -11,9 +12,8 @@ def health():
 
 @app.route("/predict")
 def predict():
-    city = request.args.get("city", "Chennai")
-    result = predict_outbreak(city)
-    return jsonify(result)
+    return jsonify(predict_outbreak())
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
