@@ -1,7 +1,26 @@
+import { useState } from "react";
+import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
+import "./App.css";
 
-function App() {
-  return <Dashboard />;
+export default function App() {
+  const [loggedIn, setLoggedIn] = useState(
+    localStorage.getItem("loggedIn") === "true"
+  );
+
+  return loggedIn ? (
+    <Dashboard
+      onLogout={() => {
+        localStorage.clear();
+        setLoggedIn(false);
+      }}
+    />
+  ) : (
+    <Login
+      onLogin={() => {
+        localStorage.setItem("loggedIn", "true");
+        setLoggedIn(true);
+      }}
+    />
+  );
 }
-
-export default App;

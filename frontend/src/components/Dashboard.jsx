@@ -1,95 +1,74 @@
 import { useEffect, useState } from "react";
-import { fetchPrediction, checkHealth } from "../services/api";
+import { fetchPrediction } from "../services/api";
 import AlertCard from "./AlertCard";
 
-function Dashboard() {
+export default function Dashboard({ onLogout }) {
+  const [city, setCity] = useState("Chennai");
   const [data, setData] = useState(null);
-  const [status, setStatus] = useState("Checking...");
 
   useEffect(() => {
-    // Fetch prediction
-    fetchPrediction()
+    fetchPrediction(city)
       .then(setData)
-      .catch(() => console.error("Prediction failed"));
-
-    // Health check
-    checkHealth()
-      .then(() => setStatus("Live Monitoring"))
-      .catch(() => setStatus("Backend offline"));
-  }, []);
+      .catch(() => setData(null));
+  }, [city]);
 
   return (
     <>
-      {/* Top Nav */}
-      <div
-        style={{
-          position: "sticky",
-          top: 0,
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-          background: "rgba(0,0,0,0.6)",
-          padding: "20px 60px",
-          zIndex: 10,
-          borderBottom: "1px solid rgba(255,255,255,0.08)",
-        }}
-      >
-        <h2 style={{ margin: 0 }}>🛡 PulseGuard</h2>
+      <div className="topbar">
+        <h2>🛡 PulseGuard</h2>
+        <button className="logout" onClick={onLogout}>Logout</button>
       </div>
 
-      {/* Main Content */}
-      <div style={{ padding: "60px" }}>
-        <h1 style={{ fontSize: "42px", marginBottom: "8px" }}>
-          PulseGuard Dashboard
-        </h1>
-        <p className="subtle">
-          Early Disease Outbreak Intelligence Platform
-        </p>
+      <div className="container">
+        <h1>PulseGuard Dashboard</h1>
+        <p className="subtle">Early Disease Outbreak Intelligence Platform</p>
 
-        <p style={{ marginTop: "12px", color: "#30d158" }}>
-          ● {status}
-        </p>
+        <select value={city} onChange={(e) => setCity(e.target.value)}>
+          <option>Chennai</option>
+          <option>Bangalore</option>
+          <option>Mumbai</option>
+          <option>Delhi</option>
+          <option>London</option>
+          <option>New York</option>
+          <option>Tokyo</option>
+        </select>
 
-        {/* Grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "24px",
-            marginTop: "40px",
-          }}
-        >
-          {/* System Status */}
-          <div className="glass" style={{ padding: "28px" }}>
-            <h3>System Status</h3>
-            <p className="subtle">Real-time surveillance active</p>
-            <p style={{ marginTop: "12px", color: "#30d158" }}>
-              ● {status}
-            </p>
-          </div>
+        <div className="grid">
+          <AlertCard title="System Status">
+            {data ? "Live Monitoring" : "Backend Offline"}
+          </AlertCard>
 
-          {/* Prediction */}
-          <div className="glass" style={{ padding: "28px" }}>
-            <h3>Outbreak Prediction</h3>
-            {!data ? (
-              <p className="subtle">Analyzing signals…</p>
+          <AlertCard title="Outbreak Prediction">
+            {data ? (
+              <>
+                <p>City: {data.city}</p>
+                <p>Risk Score: {data.risk_score}</p>
+                <p>
+                  Alert Level:{" "}
+                  <strong className={data.alert_level.toLowerCase()}>
+                    {data.alert_level}
+                  </strong>
+                </p>
+                <p>Trend: {data.trend}</p>
+              </>
             ) : (
-              <AlertCard data={data} />
+              "Loading..."
             )}
-          </div>
+          </AlertCard>
 
-          {/* AI Insights */}
-          <div className="glass" style={{ padding: "28px" }}>
-            <h3>AI Insights</h3>
-            <ul className="subtle">
-              <li>✔ Symptom spike detected</li>
-              <li>✔ Climate correlation applied</li>
-              <li>✔ Historical trends compared</li>
-            </ul>
-          </div>
+          <AlertCard title="AI Insights">
+            {data?.insights?.length ? (
+              <ul>
+                {data.insights.map((i, idx) => (
+                  <li key={idx}>✔ {i}</li>
+                ))}
+              </ul>
+            ) : (
+              "No insights available"
+            )}
+          </AlertCard>
         </div>
       </div>
     </>
   );
 }
-
-export default Dashboard;

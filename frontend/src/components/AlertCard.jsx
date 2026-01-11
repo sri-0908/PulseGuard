@@ -1,27 +1,8 @@
-function AlertCard({ data }) {
-  const color =
-    data.level === "High"
-      ? "#ff453a"
-      : data.level === "Medium"
-      ? "#ffd60a"
-      : "#30d158";
-
+export default function AlertCard({ title, children }) {
   return (
-    <div>
-      <p>
-        <strong>Region:</strong> {data.region}
-      </p>
-      <p>
-        <strong>Risk Score:</strong> {data.risk_score}
-      </p>
-      <p style={{ color }}>
-        <strong>Alert Level:</strong> {data.level}
-      </p>
-      <p>
-        <strong>Trend:</strong> {data.trend}
-      </p>
+    <div className="glass card">
+      <h3>{title}</h3>
+      {children}
     </div>
   );
 }
-
-export default AlertCard;
